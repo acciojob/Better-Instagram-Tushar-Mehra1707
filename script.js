@@ -1,39 +1,40 @@
-let draggedDiv = null;
+let draggedBox = null;
 
-document.querySelectorAll('.draggable').forEach(div => {
-  // Drag start: save the source element
-  div.addEventListener('dragstart', (e) => {
-    draggedDiv = e.target;
-    e.dataTransfer.effectAllowed = 'move';
+// Select all the boxes
+const boxes = document.querySelectorAll('.box');
+
+// Loop through each box to add event listeners
+boxes.forEach(box => {
+  box.addEventListener('dragstart', (e) => {
+    draggedBox = box; // Store the dragged box
+    e.dataTransfer.setData('text/plain', '');
+    box.style.opacity = '0.6'; // Change opacity while dragging
   });
 
-  // Drag over: allow dropping
-  div.addEventListener('dragover', (e) => {
-    e.preventDefault();
+  box.addEventListener('dragend', () => {
+    draggedBox.style.opacity = '1'; // Reset opacity after drag
   });
 
-  // Drop: swap backgrounds
-  div.addEventListener('drop', (e) => {
-    e.preventDefault();
-    if (draggedDiv && draggedDiv !== e.target) {
-      const temp = draggedDiv.style.backgroundImage;
-      draggedDiv.style.backgroundImage = e.target.style.backgroundImage;
-      e.target.style.backgroundImage = temp;
+  box.addEventListener('dragover', (e) => {
+    e.preventDefault(); // Allow drop
+  });
+
+  box.addEventListener('dragenter', (e) => {
+    e.preventDefault(); // Necessary for drop
+    box.style.borderColor = '#666'; // Change border color on enter
+  });
+
+  box.addEventListener('dragleave', () => {
+    box.style.borderColor = '#ddd'; // Reset border color on leave
+  });
+
+  box.addEventListener('drop', () => {
+    box.style.borderColor = '#ddd'; // Reset border color on drop
+    if (draggedBox && draggedBox !== box) {
+      // Swap background images
+      const temp = draggedBox.style.backgroundImage;
+      draggedBox.style.backgroundImage = box.style.backgroundImage;
+      box.style.backgroundImage = temp;
     }
-  });
-
-  // Optional: Add a little visual feedback
-  div.addEventListener('dragenter', (e) => {
-    e.target.style.borderColor = '#333';
-  });
-
-  div.addEventListener('dragleave', (e) => {
-    e.target.style.borderColor = '#ccc';
-  });
-
-  div.addEventListener('dragend', () => {
-    document.querySelectorAll('.draggable').forEach(el => {
-      el.style.borderColor = '#ccc';
-    });
   });
 });
